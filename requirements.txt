@@ -1,7 +1,7 @@
-pandas
-numpy
-scikit-learn
-lightgbm
-matplotlib
-seaborn
-scikit-optimize
+pandas==3.0.2
+numpy==2.4.4
+scikit-learn==1.8.0
+lightgbm==4.6.0
+matplotlib==3.10.8
+seaborn==0.13.2
+scikit-optimize==0.10.2
