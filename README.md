@@ -1,31 +1,31 @@
-# Network Intrusion Detection — Brute-Force Classification with Machine Learning
+# Netzwerkdaten-Analyse & Klassifikation von Angriffen
 
-Binary classification of malicious network traffic using flow-based features from the CIC IoT-DIAD 2024 dataset.  
-Focus: Brute-Force attack detection in IoT environments.
+Binäre Klassifikation von schädlichem Netzwerkverkehr auf Basis flowbasierter Features aus dem CIC IoT-DIAD 2024 Datensatz.  
+Fokus: Erkennung von Brute-Force-Angriffen in IoT-Umgebungen.
 
-> **Authors:** Doersing, Huke  
-> **Context:** University project — Master's programme, Data Science & AI
-
----
-
-## Overview
-
-This project develops a machine learning pipeline to classify network flows as either benign or anomalous (Brute-Force attacks). The dataset is sourced from the Canadian Institute for Cybersecurity and covers simulated traffic across 105 IoT devices with 33 attack scenarios.
-
-**Key design decisions:**
-- Flow-based feature selection (no payload inspection) → applicable to unknown and zero-day patterns
-- Imbalanced dataset preserved intentionally (~95.7% benign) to reflect realistic network conditions
-- F1-Score (macro) used as primary evaluation metric due to class imbalance
+> **Autoren:** Doersing, Huke  
+> **Kontext:** Universitätsprojekt — Masterstudiengang Data Science & KI
 
 ---
 
-## Project Structure
+## Überblick
+
+Dieses Projekt entwickelt eine Machine-Learning-Pipeline zur Klassifikation von Netzwerkflows als benigne oder anomal (Brute-Force-Angriffe). Der Datensatz stammt vom Canadian Institute for Cybersecurity und umfasst simulierten Datenverkehr von 105 IoT-Geräten mit 33 Angriffsszenarien.
+
+**Zentrale Designentscheidungen:**
+- Flowbasierte Feature-Auswahl (keine Payload-Inspektion) → anwendbar auf unbekannte und Zero-Day-Muster
+- Unausgeglichener Datensatz bewusst beibehalten (~95,7 % benigne) — realistischere Abbildung echter Netzwerkbedingungen
+- F1-Score (macro) als primäre Bewertungsmetrik aufgrund der Klassenungleichgewichte
+
+---
+
+## Projektstruktur
 
 ```
-├── Doersing_Huke_KI_Model.ipynb   # Main notebook
+├── Doersing_Huke_KI_Model.ipynb   # Haupt-Notebook
 ├── requirements.txt
 ├── README.md
-└── data/                          # Not included — see Dataset section below
+└── data/                          # Nicht im Repository — siehe Datensatz-Abschnitt
     ├── BenignTraffic.pcap_Flow.csv
     ├── BenignTraffic2.pcap_Flow.csv
     └── DictionaryBruteForce.pcap_Flow.csv
@@ -33,14 +33,14 @@ This project develops a machine learning pipeline to classify network flows as e
 
 ---
 
-## Dataset
+## Datensatz
 
 **CIC IoT-DIAD 2024** — Canadian Institute for Cybersecurity  
 Download: [https://www.unb.ca/cic/datasets/iot-diad-2024.html](https://www.unb.ca/cic/datasets/iot-diad-2024.html)
 
-Place the following files in a `data/` directory at the project root before running the notebook:
+Die folgenden Dateien müssen vor der Ausführung in einem `data/`-Ordner im Projektstammverzeichnis abgelegt werden:
 
-| File | Label assigned |
+| Datei | Zugewiesenes Label |
 |---|---|
 | `BenignTraffic.pcap_Flow.csv` | benign |
 | `BenignTraffic2.pcap_Flow.csv` | benign |
@@ -50,80 +50,83 @@ Place the following files in a `data/` directory at the project root before runn
 
 ## Features
 
-The following flow-based features were selected for training:
+Folgende flowbasierte Features wurden für das Training ausgewählt:
 
-| Feature | Description |
+| Feature | Beschreibung |
 |---|---|
-| Flow Duration | Total connection duration |
-| Total Fwd Packet | Packet count in forward direction |
-| Total Length of Fwd Packet | Total bytes sent forward |
-| Total Length of Bwd Packet | Total bytes sent backward |
-| Flow IAT Mean | Mean inter-arrival time between packets |
-| Flow Bytes/s | Average throughput in bytes per second |
-| SYN Flag Count | TCP connection initiation flags |
-| ACK Flag Count | TCP acknowledgement flags |
-| FIN Flag Count | TCP connection termination flags |
+| Flow Duration | Gesamtdauer der Verbindung |
+| Total Fwd Packet | Paketanzahl in Vorwärtsrichtung |
+| Total Length of Fwd Packet | Gesamtbytes in Vorwärtsrichtung |
+| Total Length of Bwd Packet | Gesamtbytes in Rückwärtsrichtung |
+| Flow IAT Mean | Mittlere Zwischenankunftszeit zwischen Paketen |
+| Flow Bytes/s | Durchschnittlicher Durchsatz in Bytes pro Sekunde |
+| SYN Flag Count | TCP-Verbindungsaufbau-Flags |
+| ACK Flag Count | TCP-Bestätigungs-Flags |
+| FIN Flag Count | TCP-Verbindungsabbau-Flags |
 
 ---
 
-## Methodology
+## Methodik
 
-### 1 — Exploratory Data Analysis (EDA)
-- Correlation matrix (Pearson) to identify feature relationships
-- Boxplots and KDE plots per class to visualise distributional differences
-- Key finding: anomalous flows cluster at low values across most features, indicating short, automated, connection patterns
+### 1 — Explorative Datenanalyse (EDA)
+- Korrelationsmatrix (Pearson) zur Identifikation von Feature-Beziehungen
+- Boxplots und KDE-Plots je Klasse zur Darstellung von Verteilungsunterschieden
+- Zentrales Ergebnis: Anomale Flows konzentrieren sich auf niedrige Werte in fast allen Features — typisch für kurze, automatisierte Angriffsmuster
 
-### 2 — Preprocessing
+### 2 — Vorverarbeitung
 - Baseline: `SimpleImputer (median)` + `StandardScaler`
-- Extended grid: 5 scalers × 3 imputing strategies × `SimpleImputer` / `KNNImputer`
-- Best configuration for LightGBM: `KNNImputer` + `RobustScaler`
+- Erweitertes Grid: 5 Skalierer × 3 Imputing-Strategien × `SimpleImputer` / `KNNImputer`
+- Beste Konfiguration für LightGBM: `KNNImputer` + `RobustScaler`
 
-### 3 — Model Comparison (baseline)
+### 3 — Modellvergleich (Baseline)
 
-| Model | Accuracy | Precision | Recall | F1-Score |
+| Modell | Accuracy | Precision | Recall | F1-Score |
 |---|---|---|---|---|
-| **Random Forest** | 0.9894 | 0.9382 | 0.9318 | **0.9350** |
-| Decision Tree | 0.9869 | 0.9222 | 0.9166 | 0.9194 |
-| LightGBM | 0.9774 | 0.8296 | 0.9730 | 0.8868 |
-| Gradient Boosting | 0.9794 | 0.8934 | 0.8401 | 0.8646 |
+| **Random Forest** | 0,9894 | 0,9382 | 0,9318 | **0,9350** |
+| Decision Tree | 0,9869 | 0,9222 | 0,9166 | 0,9194 |
+| LightGBM | 0,9774 | 0,8296 | 0,9730 | 0,8868 |
+| Gradient Boosting | 0,9794 | 0,8934 | 0,8401 | 0,8646 |
 
-### 4 — Hyperparameter Tuning (BayesSearchCV)
-Random Forest and LightGBM were selected for tuning. Bayesian optimisation with 50 iterations, 4-fold cross-validation, scoring on `f1_macro`.
+### 4 — Hyperparameter-Optimierung (BayesSearchCV)
+Random Forest und LightGBM wurden für die Optimierung ausgewählt. Bayesianische Optimierung mit 50 Iterationen, 4-facher Kreuzvalidierung, Scoring auf `f1_macro`.
 
-Best LightGBM parameters found:
-- `n_estimators`: 500, `learning_rate`: 0.033, `max_depth`: 15, `num_leaves`: 150, `min_child_samples`: 5, `subsample`: 1.0, `colsample_bytree`: 0.936
+Beste LightGBM-Parameter:
+- `n_estimators`: 500, `learning_rate`: 0,033, `max_depth`: 15, `num_leaves`: 150, `min_child_samples`: 5, `subsample`: 1,0, `colsample_bytree`: 0,936
 
-### 5 — Final Results
+### 5 — Abschlussergebnisse
 
-| Model | Accuracy | Precision | Recall | F1-Score |
+| Modell | Accuracy | Precision | Recall | F1-Score |
 |---|---|---|---|---|
-| **RandomForestClassifier** | **0.9896** | **0.9390** | **0.9332** | **0.9361** |
-| LGBMClassifier | 0.9857 | 0.8912 | 0.9516 | 0.9190 |
+| **RandomForestClassifier** | **0,9896** | **0,9390** | **0,9332** | **0,9361** |
+| LGBMClassifier | 0,9857 | 0,8912 | 0,9516 | 0,9190 |
 
-**Selected model: RandomForestClassifier** — highest F1-Score, best balance of precision and recall, lowest false-positive rate.
+**Gewähltes Modell: RandomForestClassifier** — höchster F1-Score, bestes Gleichgewicht aus Precision und Recall, niedrigste Fehlalarmrate.
 
 ---
 
-## Setup
+## Installation & Ausführung
 
-**Requirements:** Python 3.9+
+**Voraussetzung:** Python 3.11+
 
 ```bash
 pip install -r requirements.txt
 jupyter notebook Doersing_Huke_KI_Model.ipynb
 ```
 
----
-
-## Limitations & Outlook
-
-- Dataset is synthetic (lab environment) — real-world traffic distributions may differ
-- Only Brute-Force attack type included; multi-class extension across all 33 attack scenarios is a natural next step
-- Sequential or graph-based models (RNN, GCN) could further improve detection of complex attack patterns
-- Hybrid rule-based + ML systems worth exploring for production environments
+> **Hinweis zu pandas 3.x:** Die `requirements.txt` verwendet die aktuellsten Paketversionen. pandas 3.0 enthält Breaking Changes gegenüber 2.x (u. a. neuer Standard-String-Datentyp). Sollten Kompatibilitätsprobleme auftreten, kann alternativ `pandas==2.2.3` installiert werden.
 
 ---
 
-## License
+## Limitierungen & Ausblick
 
-Dataset: [CIC IoT-DIAD 2024](https://www.unb.ca/cic/datasets/iot-diad-2024.html) — Canadian Institute for Cybersecurity (not included in this repository). 
+- Datensatz ist synthetisch (Laborumgebung) — reale Verkehrsverteilungen können abweichen
+- Nur Brute-Force-Angriffe berücksichtigt; Erweiterung auf alle 33 Angriffsszenarien als nächster Schritt denkbar
+- Sequenzielle oder graphbasierte Modelle (RNN, GCN) könnten die Erkennungsrate weiter verbessern
+- Hybride regelbasierte + lernende Systeme für Produktionsumgebungen prüfenswert
+
+---
+
+## Lizenz
+
+Datensatz: [CIC IoT-DIAD 2024](https://www.unb.ca/cic/datasets/iot-diad-2024.html) — Canadian Institute for Cybersecurity (nicht im Repository enthalten).  
+Code: MIT License.
