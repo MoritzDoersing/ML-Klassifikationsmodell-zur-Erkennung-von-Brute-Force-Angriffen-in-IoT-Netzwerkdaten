@@ -3,8 +3,8 @@
 Binäre Klassifikation von schädlichem Netzwerkverkehr auf Basis flowbasierter Features aus dem CIC IoT-DIAD 2024 Datensatz.  
 Fokus: Erkennung von Brute-Force-Angriffen in IoT-Umgebungen.
 
-> **Autoren:** Doersing, Huke  
-> **Kontext:** Universitätsprojekt — Masterstudiengang Data Science & KI
+> **Autoren:** Moritz Doersing, Alexander Huke  
+> **Kontext:** Universitätsprojekt - Masterstudiengang Data Science & KI
 
 ---
 
