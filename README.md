@@ -128,5 +128,4 @@ jupyter notebook Netzwerkdaten_Analyse_Klassifikation.ipynb
 
 ## Lizenz
 
-Datensatz: [CIC IoT-DIAD 2024](https://www.unb.ca/cic/datasets/iot-diad-2024.html) — Canadian Institute for Cybersecurity (nicht im Repository enthalten).  
-Code: MIT License.
+Datensatz: [CIC IoT-DIAD 2024](https://www.unb.ca/cic/datasets/iot-diad-2024.html) — Canadian Institute for Cybersecurity (nicht im Repository enthalten). 
