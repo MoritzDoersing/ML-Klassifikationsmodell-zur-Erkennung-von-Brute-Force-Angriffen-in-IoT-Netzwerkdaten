@@ -22,7 +22,7 @@ Dieses Projekt entwickelt eine Machine-Learning-Pipeline zur Klassifikation von 
 ## Projektstruktur
 
 ```
-├── Doersing_Huke_KI_Model.ipynb   # Haupt-Notebook
+├── Netzwerkdaten_Analyse_Klassifikation.ipynb   # Haupt-Notebook
 ├── requirements.txt
 ├── README.md
 └── data/                          # Nicht im Repository — siehe Datensatz-Abschnitt
