@@ -110,7 +110,7 @@ Beste LightGBM-Parameter:
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook Doersing_Huke_KI_Model.ipynb
+jupyter notebook Netzwerkdaten_Analyse_Klassifikation.ipynb
 ```
 
 > **Hinweis zu pandas 3.x:** Die `requirements.txt` verwendet die aktuellsten Paketversionen. pandas 3.0 enthält Breaking Changes gegenüber 2.x (u. a. neuer Standard-String-Datentyp). Sollten Kompatibilitätsprobleme auftreten, kann alternativ `pandas==2.2.3` installiert werden.
